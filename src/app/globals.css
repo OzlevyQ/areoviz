@@ -1,0 +1,261 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 25% 98%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 259 100% 65%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 186 90% 60%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 340 82% 62%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 259 100% 65%;
+
+    --radius: 0.75rem;
+    
+    /* Custom colors */
+    --success: 142 71% 45%;
+    --warning: 38 92% 50%;
+    --info: 199 89% 48%;
+  }
+
+  .dark {
+    --background: 224 71% 4%;
+    --foreground: 210 40% 98%;
+
+    --card: 224 71% 7%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 224 71% 7%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 263 90% 65%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 186 90% 45%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 340 82% 52%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 263 90% 65%;
+    
+    /* Custom colors */
+    --success: 142 71% 45%;
+    --warning: 38 92% 50%;
+    --info: 199 89% 48%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+}
+
+/* Custom animations */
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* React Flow custom styles */
+.react-flow__node {
+  font-size: 12px;
+}
+
+.react-flow__edge-path {
+  stroke-width: 2;
+}
+
+.react-flow__handle {
+  width: 8px;
+  height: 8px;
+  background: #555;
+  border: 1px solid #fff;
+}
+
+/* Custom role colors that work in both light and dark mode */
+.text-pilot {
+  color: #3B82F6;
+}
+
+.bg-pilot {
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+}
+
+.border-pilot {
+  border-color: #3B82F6;
+}
+
+.text-technician {
+  color: #14B8A6;
+}
+
+.bg-technician {
+  background: linear-gradient(135deg, #14B8A6 0%, #0D9488 100%);
+}
+
+.border-technician {
+  border-color: #14B8A6;
+}
+
+.text-manager {
+  color: #8B5CF6;
+}
+
+.bg-manager {
+  background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+}
+
+.border-manager {
+  border-color: #8B5CF6;
+}
+
+/* Gradient backgrounds */
+.gradient-primary {
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
+}
+
+.gradient-secondary {
+  background: linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(var(--info)) 100%);
+}
+
+.gradient-success {
+  background: linear-gradient(135deg, hsl(var(--success)) 0%, #10B981 100%);
+}
+
+.gradient-warning {
+  background: linear-gradient(135deg, hsl(var(--warning)) 0%, #F59E0B 100%);
+}
+
+.gradient-danger {
+  background: linear-gradient(135deg, hsl(var(--destructive)) 0%, #DC2626 100%);
+}
+
+/* Glass morphism effects */
+.glass {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-dark {
+  backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Animated gradients */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animated-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 15s ease infinite;
+}
+
+/* Glow effects */
+.glow-primary {
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+}
+
+.glow-secondary {
+  box-shadow: 0 0 20px rgba(20, 184, 166, 0.5);
+}
+
+.glow-accent {
+  box-shadow: 0 0 20px rgba(236, 72, 153, 0.5);
+}
+
+/* Card styles */
+.card-gradient {
+  background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Status colors */
+.status-normal {
+  color: #10B981;
+}
+
+.status-warning {
+  color: #F59E0B;
+}
+
+.status-critical {
+  color: #EF4444;
+}
+
+.bg-status-normal {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+}
+
+.bg-status-warning {
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+}
+
+.bg-status-critical {
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+}

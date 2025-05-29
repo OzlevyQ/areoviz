@@ -1,0 +1,135 @@
+// src/components/ui/AnomalyList.tsx
+
+'use client';
+
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Badge } from '@/components/ui/badge';
+import { useDashboard } from '@/contexts/DashboardContext';
+import { formatDateTime, getSeverityColor } from '@/lib/utils';
+import { AlertCircle, AlertTriangle, Info, ShieldAlert } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Anomaly } from '@/types';
+
+export default function AnomalyList() {
+  const { activeAnomalies, selectedAnomaly, setSelectedAnomaly, role } = useDashboard();
+
+  const getSeverityIcon = (severity: string) => {
+    switch (severity) {
+      case 'critical':
+        return <ShieldAlert className="h-4 w-4" />;
+      case 'high':
+        return <AlertCircle className="h-4 w-4" />;
+      case 'medium':
+        return <AlertTriangle className="h-4 w-4" />;
+      case 'low':
+        return <Info className="h-4 w-4" />;
+      default:
+        return <Info className="h-4 w-4" />;
+    }
+  };
+
+  const getRoleAccentColor = () => {
+    switch (role) {
+      case 'pilot':
+        return 'border-pilot/20 hover:border-pilot/40';
+      case 'technician':
+        return 'border-technician/20 hover:border-technician/40';
+      case 'manager':
+        return 'border-manager/20 hover:border-manager/40';
+      default:
+        return 'border-primary/20 hover:border-primary/40';
+    }
+  };
+
+  const handleAnomalyClick = (anomaly: Anomaly) => {
+    setSelectedAnomaly(anomaly.id === selectedAnomaly?.id ? null : anomaly);
+  };
+
+  // Sort anomalies by severity
+  const sortedAnomalies = [...activeAnomalies].sort((a, b) => {
+    const severityOrder = { critical: 0, high: 1, medium: 2, low: 3 };
+    return severityOrder[a.severity] - severityOrder[b.severity];
+  });
+
+  return (
+    <Card className="h-full flex flex-col">
+      <CardHeader className="pb-3">
+        <CardTitle className="flex items-center justify-between">
+          <span>Active Anomalies</span>
+          <Badge variant="secondary" className="ml-2">
+            {activeAnomalies.length}
+          </Badge>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="flex-1 p-0">
+        <ScrollArea className="h-full px-4 pb-4">
+          {sortedAnomalies.length === 0 ? (
+            <div className="text-center py-8">
+              <div className="text-muted-foreground">
+                <Info className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">No active anomalies detected</p>
+                <p className="text-xs mt-1">All systems operating normally</p>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {sortedAnomalies.map((anomaly) => (
+                <Card
+                  key={anomaly.id}
+                  className={`cursor-pointer transition-all ${getRoleAccentColor()} ${
+                    selectedAnomaly?.id === anomaly.id
+                      ? 'ring-2 ring-primary shadow-md'
+                      : ''
+                  }`}
+                  onClick={() => handleAnomalyClick(anomaly)}
+                >
+                  <CardContent className="p-3">
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <div className={`p-1 rounded ${getSeverityColor(anomaly.severity)}`}>
+                          {getSeverityIcon(anomaly.severity)}
+                        </div>
+                        <Badge
+                          variant="outline"
+                          className={getSeverityColor(anomaly.severity)}
+                        >
+                          {anomaly.severity.toUpperCase()}
+                        </Badge>
+                      </div>
+                      <span className="text-xs text-muted-foreground">
+                        {formatDateTime(anomaly.timestamp)}
+                      </span>
+                    </div>
+                    
+                    <h4 className="font-medium text-sm mb-1">{anomaly.description}</h4>
+                    
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {anomaly.affectedSystems.map((system, idx) => (
+                        <Badge key={idx} variant="secondary" className="text-xs">
+                          {system}
+                        </Badge>
+                      ))}
+                    </div>
+
+                    {anomaly.status && (
+                      <div className="mt-2">
+                        <Badge
+                          variant={anomaly.status === 'active' ? 'default' : 'secondary'}
+                          className="text-xs"
+                        >
+                          {anomaly.status.toUpperCase()}
+                        </Badge>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </ScrollArea>
+      </CardContent>
+    </Card>
+  );
+}
