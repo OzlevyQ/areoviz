@@ -48,65 +48,6 @@ export default function VoiceChatDialog({
   const microphoneRef = useRef<MediaStreamAudioSourceNode | null>(null);
   const animationFrameRef = useRef<number | null>(null);
 
-  // Initialize speech recognition
-  useEffect(() => {
-    if (typeof window !== 'undefined' && ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
-      const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
-      recognitionRef.current = new SpeechRecognition();
-      recognitionRef.current.continuous = false;
-      recognitionRef.current.interimResults = false;
-      recognitionRef.current.lang = language === 'he' ? 'he-IL' : 'en-US';
-
-      recognitionRef.current.onresult = (event: any) => {
-        const transcript = event.results[0][0].transcript;
-        setCurrentText(transcript);
-        handleUserSpeech(transcript);
-      };
-
-      recognitionRef.current.onerror = (event: any) => {
-        console.error('Speech recognition error:', event.error);
-        setError(language === 'he' ? 'שגיאה בזיהוי קול' : 'Speech recognition error');
-        setIsListening(false);
-      };
-
-      recognitionRef.current.onend = () => {
-        setIsListening(false);
-      };
-    }
-
-    if (typeof window !== 'undefined') {
-      synthRef.current = window.speechSynthesis;
-    }
-
-    return () => {
-      if (recognitionRef.current) {
-        recognitionRef.current.stop();
-      }
-      if (synthRef.current) {
-        synthRef.current.cancel();
-      }
-    };
-  }, [language]);
-
-  // Initialize audio context for visualization
-  const initializeAudio = useCallback(async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      audioContextRef.current = new AudioContext();
-      analyserRef.current = audioContextRef.current.createAnalyser();
-      microphoneRef.current = audioContextRef.current.createMediaStreamSource(stream);
-      
-      analyserRef.current.fftSize = 256;
-      microphoneRef.current.connect(analyserRef.current);
-      
-      return stream;
-    } catch (err) {
-      console.error('Error accessing microphone:', err);
-      setError(language === 'he' ? 'שגיאה בגישה למיקרופון' : 'Error accessing microphone');
-      return null;
-    }
-  }, [language]);
-
   // Audio level monitoring
   const monitorAudioLevel = useCallback(() => {
     if (!analyserRef.current) return;
@@ -172,7 +113,66 @@ export default function VoiceChatDialog({
       console.error('Error getting AI response:', err);
       setError(language === 'he' ? 'שגיאה בקבלת תשובה' : 'Error getting response');
     }
-  }, [currentRecord, activeAnomalies, role, language, speakText]);
+  }, [currentRecord, activeAnomalies, role, language, speakText, setConversation, setCurrentText, setError]);
+
+  // Initialize speech recognition
+  useEffect(() => {
+    if (typeof window !== 'undefined' && ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+      const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = false;
+      recognitionRef.current.interimResults = false;
+      recognitionRef.current.lang = language === 'he' ? 'he-IL' : 'en-US';
+
+      recognitionRef.current.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        setCurrentText(transcript);
+        handleUserSpeech(transcript);
+      };
+
+      recognitionRef.current.onerror = (event: any) => {
+        console.error('Speech recognition error:', event.error);
+        setError(language === 'he' ? 'שגיאה בזיהוי קול' : 'Speech recognition error');
+        setIsListening(false);
+      };
+
+      recognitionRef.current.onend = () => {
+        setIsListening(false);
+      };
+    }
+
+    if (typeof window !== 'undefined') {
+      synthRef.current = window.speechSynthesis;
+    }
+
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+      if (synthRef.current) {
+        synthRef.current.cancel();
+      }
+    };
+  }, [language, handleUserSpeech]);
+
+  // Initialize audio context for visualization
+  const initializeAudio = useCallback(async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      audioContextRef.current = new AudioContext();
+      analyserRef.current = audioContextRef.current.createAnalyser();
+      microphoneRef.current = audioContextRef.current.createMediaStreamSource(stream);
+      
+      analyserRef.current.fftSize = 256;
+      microphoneRef.current.connect(analyserRef.current);
+      
+      return stream;
+    } catch (err) {
+      console.error('Error accessing microphone:', err);
+      setError(language === 'he' ? 'שגיאה בגישה למיקרופון' : 'Error accessing microphone');
+      return null;
+    }
+  }, [language]);
 
   // Start listening
   const startListening = useCallback(async () => {
