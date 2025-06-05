@@ -65,10 +65,10 @@ npm install
 ```
 
 3. **Environment setup**
-Create a `.env.local` file:
+Create a `.env.local` file with your database connection and Gemini key:
 ```env
-MONGODB_URI=your_mongodb_connection_string
-NEXT_PUBLIC_GEMINI_API_KEY=your_gemini_api_key
+MONGODB_URI=mongodb+srv://ozlevy9:Qq63415355@cluster0.9crpo4m.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+NEXT_PUBLIC_GEMINI_API_KEY=AIzaSyDtvD5fyQ-qL-5xV5fMpDAjlo2ujwEQ-_g
 ```
 
 4. **Run the development server**
